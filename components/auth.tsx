@@ -5,7 +5,7 @@ import { useToasts } from "@geist-ui/core";
 import Cookies from 'js-cookie'
 
 interface Props {
-    onAuthFinished: () => void
+    onAuthFinished: (username: string) => void
 }
 
 const Auth = (props: Props) => {
@@ -36,7 +36,7 @@ const Auth = (props: Props) => {
         Cookies.set('authorization', data.token, { expires: 1 })
         setIsAuthenticating(false)
         setToast({ text: "Signed In!", type: "success" })
-        props.onAuthFinished()
+        props.onAuthFinished(username)
     }
 
     const onSignUp = async () => {

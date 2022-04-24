@@ -10,6 +10,7 @@ import Auth from '../components/auth'
 
 const App = ({ Component, pageProps, router }: AppProps) => {
   const [host, setHost] = useState('')
+  const [user, setUser] = useState('')
   const [theme, setTheme] = useState('light')
   const [loading, setLoading] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -113,8 +114,8 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         <Divider />
         {
           isAuthenticated
-            ? <Component {...pageProps} theme={theme} />
-            : <Auth onAuthFinished={() => setIsAuthenticated(true)} />
+            ? <Component {...pageProps} theme={theme} currentUser={user} />
+            : <Auth onAuthFinished={(username: string) => { setIsAuthenticated(true); setUser(username) }} />
 
         }
         <Spacer />

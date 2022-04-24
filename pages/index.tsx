@@ -1,6 +1,5 @@
 import { Button, Tree, Text, Fieldset, Divider, Loading, Spacer } from '@geist-ui/core'
 import { ChevronDown, ChevronsDown, ChevronsUp, Edit, Eye, Plus, RefreshCcw, Trash2 } from '@geist-ui/icons'
-import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import Delete from '../components/delete'
 import Modify from '../components/modify'
@@ -15,9 +14,13 @@ interface Document {
   size: number,
 }
 
+interface Props {
+  currentUser: string
+}
+
 let i = 'open';
 
-const Home: NextPage = () => {
+const Home = (props: Props) => {
   const [uploadModalIsVisible, setUploadModalIsVisible] = useState(false)
   const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false)
   const [modifyModalIsVisible, setModifyModalIsVisible] = useState(false)
@@ -95,7 +98,7 @@ const Home: NextPage = () => {
     setRecentFileID(id)
 
     if (i === 'open') {
-      window.open(`/api/objects/smrth/${id}`)
+      window.open(`/api/objects/${props.currentUser}/${id}`)
     }
     else if (i === 'delete') {
       setDeleteModalIsVisible(true)
