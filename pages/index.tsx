@@ -51,7 +51,10 @@ const Home = (props: Props) => {
       let path = doc.document.split('/')
       let docName = path.pop()
 
-      path.length > 0 && tempHints.push(path.join('/'))
+      if (path.length > 0 && !tempHints.includes(path.join('/'))) {
+        tempHints.push(path.join('/'))
+      }
+
       path.splice(0, 0, doc.visibility)
 
       let idx = 0
