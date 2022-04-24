@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
 import { useEffect, useState } from 'react'
-import { GeistProvider, CssBaseline, Link, Divider, Page, Text, Loading, Spacer, Button } from '@geist-ui/core'
+import { GeistProvider, CssBaseline, Link, Divider, Page, Text, Loading, Spacer, Button, Breadcrumbs } from '@geist-ui/core'
 import Head from 'next/head'
 import Script from 'next/script'
 import Cookies from 'js-cookie'
@@ -48,6 +48,14 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       )
     }
+
+    const localUser = window.localStorage.getItem('user')
+    if (localUser) {
+      setUser(localUser)
+    }
+    else {
+      window.localStorage.setItem('user', 'smrth')
+    }
     setLoading(false)
 
   }, [isAuthenticated])
@@ -93,9 +101,17 @@ const App = ({ Component, pageProps, router }: AppProps) => {
       <Page id="page" dotBackdrop={false} dotSize="2px" style={{ padding: 20, marginTop: -30 }}>
         <Page.Header>
           <div className='header-container'>
-            <Link href='/'>
+            <Link href='/' style={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
               <Text h2 type="success">{host}</Text>
+              {
+                isAuthenticated &&
+                <Breadcrumbs>
+                  <Breadcrumbs.Item></Breadcrumbs.Item>
+                  <Breadcrumbs.Item>{user}</Breadcrumbs.Item>
+                </Breadcrumbs>
+              }
             </Link>
+
             <div className='header-options'>
               {isAuthenticated && <Button auto style={{ marginRight: 10 }} onClick={signOut}>Sign Out</Button>}
               <Button
@@ -115,7 +131,9 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         {
           isAuthenticated
             ? <Component {...pageProps} theme={theme} currentUser={user} />
-            : <Auth onAuthFinished={(username: string) => { setIsAuthenticated(true); setUser(username) }} />
+            : <Auth onAuthFinished={(username: string) => {
+              setIsAuthenticated(true); window.localStorage.setItem('user', username)
+            }} />
 
         }
         <Spacer />

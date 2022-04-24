@@ -98,7 +98,7 @@ const Home = (props: Props) => {
     setRecentFileID(id)
 
     if (i === 'open') {
-      window.open(`/api/objects/${props.currentUser}/${id}`)
+      window.open(`/${props.currentUser}/${id}`)
     }
     else if (i === 'delete') {
       setDeleteModalIsVisible(true)
