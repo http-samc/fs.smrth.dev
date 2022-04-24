@@ -9,6 +9,7 @@ import { Moon, Sun } from '@geist-ui/icons'
 import Auth from '../components/auth'
 
 const App = ({ Component, pageProps, router }: AppProps) => {
+  const [host, setHost] = useState('')
   const [theme, setTheme] = useState('light')
   const [loading, setLoading] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -29,7 +30,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
 
   useEffect(() => {
     setLoading(true)
-
+    setHost(window.location.host)
     if (!Cookies.get('authorization')) {
       setIsAuthenticated(false)
     }
@@ -72,7 +73,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
     <GeistProvider themeType={theme}>
       <CssBaseline />
       <Head>
-        <title>fs.smrth.dev</title>
+        <title>{host}</title>
         <meta name="title" content="fs.smrth.dev" />
         <meta name="description" content="Sam Chitgopekar's filesystem." />
 
@@ -92,7 +93,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         <Page.Header>
           <div className='header-container'>
             <Link href='/'>
-              <Text h2 type="success">fs.smrth.dev</Text>
+              <Text h2 type="success">{host}</Text>
             </Link>
             <div className='header-options'>
               {isAuthenticated && <Button auto style={{ marginRight: 10 }} onClick={signOut}>Sign Out</Button>}
