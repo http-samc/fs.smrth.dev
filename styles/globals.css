@@ -1,16 +1,67 @@
 html,
-body {
+body,
+#__next {
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    height: 100vh;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+#page {
+  max-width: 860px;
+  width: 100%;
 }
 
-* {
-  box-sizing: border-box;
+.auth-container {
+  width: 100%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-container {
+  width: 100%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header-options, .header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: fit-content;
+}
+
+.header-container {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.upload-container > * {
+  width: 100%;
+}
+
+input[type=file]::file-selector-button {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: #0070f3;
+  border: 2px solid #0070f3;
+  border-radius: 5px;
+  color: white;
+  margin-right: 10px;
 }
