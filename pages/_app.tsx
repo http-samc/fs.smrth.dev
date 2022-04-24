@@ -120,7 +120,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         <Page.Footer id='footer'>
           <Divider />
           <Text id='masthead' style={{ textAlign: 'center' }}>
-            Lost? Go to <a href='/'>smrth.dev</a>.
+            Lost? Go to <Link style={{ color: '#0070f3' }} href='/'>smrth.dev</Link>.
           </Text>
         </Page.Footer>
       </Page >
