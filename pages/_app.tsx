@@ -118,8 +118,8 @@ const App = ({ Component, pageProps, router }: AppProps) => {
 
         }
         <Spacer />
+        <Divider />
         <Page.Footer id='footer'>
-          <Divider />
           <Text id='masthead' style={{ textAlign: 'center' }}>
             Lost? Go to <Link style={{ color: '#0070f3' }} href='/'>smrth.dev</Link>.
           </Text>

@@ -132,6 +132,7 @@ const Home: NextPage = () => {
       <Upload visible={uploadModalIsVisible} toggleVisibility={toggleUploadModal} hints={hints} onModalClose={getFiles} />
       <Modify visible={modifyModalIsVisible} toggleVisibility={toggleModifyModal} id={recentFileID} hints={hints} onModalClose={getFiles} />
       <Delete visible={deleteModalIsVisible} toggleVisibility={toggleDeleteModal} id={recentFileID} onModalClose={getFiles} />
+      <Spacer h={1.25} />
       <Fieldset height='100%' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
           <Fieldset.Content className='header-container'>
@@ -163,7 +164,6 @@ const Home: NextPage = () => {
           <Text small>Last Updated: {new Date(updated).toUTCString()}</Text>
         </Fieldset.Footer>
       </Fieldset>
-
     </div>
   )
 }
