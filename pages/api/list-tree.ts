@@ -5,7 +5,6 @@ import fsAuth, { FSRequest } from '../../utils/fs-auth';
 
 const handler = nextConnect({
     onError: (err, req: NextApiRequest, res: NextApiResponse, next) => {
-        console.error(err.stack);
         res.status(500).end("Sorry, something broke!");
     },
     onNoMatch: (req: NextApiRequest, res: NextApiResponse) => {
@@ -21,16 +20,16 @@ const handler = nextConnect({
         }
 
         AWS.config.update({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            region: process.env.AWS_REGION
+            accessKeyId: process.env.FS_AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.FS_AWS_SECRET_ACCESS_KEY,
+            region: process.env.FS_AWS_REGION
         })
 
 
         const s3 = new AWS.S3();
 
         const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: process.env.FS_AWS_BUCKET_NAME,
             Marker: req.authorizedUser
         };
 

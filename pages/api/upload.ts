@@ -18,7 +18,6 @@ interface UploadRequest extends FSRequest {
 
 const handler = nextConnect({
     onError: (err, req: NextApiRequest, res: NextApiResponse, next) => {
-        console.error(err.stack);
         res.status(500).end("Sorry, something broke!");
     },
     onNoMatch: (req, res) => {
@@ -35,9 +34,9 @@ const handler = nextConnect({
         }
 
         AWS.config.update({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            region: process.env.AWS_REGION
+            accessKeyId: process.env.FS_AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.FS_AWS_SECRET_ACCESS_KEY,
+            region: process.env.FS_AWS_REGION
         })
 
 
@@ -49,7 +48,7 @@ const handler = nextConnect({
 
         // Setting up S3 upload parameters
         const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: process.env.FS_AWS_BUCKET_NAME,
             Key: `${req.authorizedUser}/${req.body.visibility}/${req.body.path ? req.body.path + '/' : ''}${req.files.file.name}`,
             Body: fileContent,
             MediaMetadata: {

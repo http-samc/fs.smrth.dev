@@ -54,7 +54,6 @@ const Modify = (props: Props) => {
         fetch(`/api/modify?to=${fileVisibility}/${path ? path + '/' : ''}${fileName}&from=${props.id}`)
             .then(res => res.status == 200 ? res.json() : null)
             .then(res => {
-                console.log(res)
                 if (res) {
                     setToast({ text: "Successfully Modified File", type: "success" })
                 }
