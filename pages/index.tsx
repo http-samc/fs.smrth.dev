@@ -1,5 +1,5 @@
-import { Button, Tree, Text, Fieldset, Divider, Loading, Spacer } from '@geist-ui/core'
-import { ChevronDown, ChevronsDown, ChevronsUp, Edit, Eye, Plus, RefreshCcw, Trash2 } from '@geist-ui/icons'
+import { Button, Tree, Text, Fieldset, Divider, Loading, Spacer, useToasts } from '@geist-ui/core'
+import { ChevronDown, ChevronsDown, ChevronsUp, Copy, Edit, Eye, Plus, RefreshCcw, Trash2 } from '@geist-ui/icons'
 import { useEffect, useState } from 'react'
 import Delete from '../components/delete'
 import Modify from '../components/modify'
@@ -30,6 +30,7 @@ const Home = (props: Props) => {
   const [hints, setHints] = useState<string[]>([])
   const [recentFileID, setRecentFileID] = useState("")
   const [loading, setLoading] = useState(true)
+  const { setToast } = useToasts()
 
   const getFiles = async () => {
     setLoading(true)
@@ -97,7 +98,26 @@ const Home = (props: Props) => {
   const handleFileAction = (id: string) => {
     setRecentFileID(id)
 
-    if (i === 'open') {
+    if (i === 'copy') {
+      window.navigator.clipboard.writeText(`https://${window.location.host}/${props.currentUser}/${id}`)
+      let vis = id.split('/')[0]
+      let statement;
+      if (vis === 'private') {
+        statement = 'This link only works for you.'
+      }
+      else if (vis === 'public') {
+        statement = 'Anyone authenticated can use this link.'
+      }
+      else {
+        statement = 'This link works for anyone.'
+      }
+
+      setToast({
+        text: 'Copied link to clipboard! ' + statement,
+        type: 'success'
+      })
+    }
+    else if (i === 'open') {
       window.open(`/${props.currentUser}/${id}`)
     }
     else if (i === 'delete') {
@@ -139,15 +159,16 @@ const Home = (props: Props) => {
       <Fieldset height='100%' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
           <Fieldset.Content className='header-container'>
-            <div style={{ width: 240, marginTop: 5 }} className='header-options'>
+            <div style={{ width: 240, marginTop: 7 }} className='header-options'>
               <Button onClick={toggleUploadModal} icon={<Plus />} auto>Upload</Button>
               <Button icon={treeExpanded ? <ChevronsUp /> : <ChevronsDown />} onClick={toggleTreeExpanded} auto />
               <Button icon={<RefreshCcw />} onClick={getFiles} auto />
             </div>
-            <div style={{ width: 180, marginTop: 5 }} className='header-container'>
-              <Button icon={<Eye />} onClick={() => i = 'open'} auto ghost type="success" />
-              <Button icon={<Edit />} onClick={() => i = 'modify'} auto ghost type="warning" />
-              <Button icon={<Trash2 />} onClick={() => i = 'delete'} auto ghost type="error" />
+            <div style={{ width: 240, marginTop: 7 }} className='header-container'>
+              <Button icon={<Copy />} onClick={() => { i = 'copy'; setToast({ text: 'Mode: Copying Link', type: 'secondary' }) }} auto ghost type="secondary" />
+              <Button icon={<Eye />} onClick={() => { i = 'open'; setToast({ text: 'Mode: Opening File', type: 'success' }) }} auto ghost type="success" />
+              <Button icon={<Edit />} onClick={() => { i = 'modify'; setToast({ text: 'Mode: Modifying File', type: 'warning' }) }} auto ghost type="warning" />
+              <Button icon={<Trash2 />} onClick={() => { i = 'delete'; setToast({ text: 'Mode: Deleting File', type: 'error' }) }} auto ghost type="error" />
             </div>
           </Fieldset.Content>
           <Divider my={0} />
