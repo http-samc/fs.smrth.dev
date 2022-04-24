@@ -16,6 +16,10 @@ const handler = nextConnect({
     },
 })
     .post(async (req: NextApiRequest, res: NextApiResponse) => {
+        // Filesystem not made public yet (closed beta)!
+        res.status(400).end('Not available for public use yet.');
+        return;
+
         await client.connect();
         const authLookup = client.db('fs-smrth-dev').collection('auth');
 
