@@ -26,7 +26,7 @@ const fsAuth = async (req: FSRequest, res: NextApiResponse, next: CallableFuncti
     req.hasValidAuthorization = new Date(tokenContract.expiration) <= new Date() ? false : true;
 
     if (token && !req.hasValidAuthorization) {
-        tokenLookup.deleteOne({ token });
+        await tokenLookup.deleteOne({ token });
     }
 
     await client.close();

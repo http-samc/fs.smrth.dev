@@ -25,7 +25,7 @@ const handler = nextConnect({
          * from: <old visibility>/<old path?>/<old filename>.<old extension>
          */
 
-        const { to, from } = req.query;
+        const { to, from, batchAction } = req.query;
         if (!to || !from) {
             res.status(400).end("Missing movement information");
             return;
@@ -46,6 +46,52 @@ const handler = nextConnect({
 
         const s3 = new AWS.S3();
 
+        if (batchAction) {
+            let hadErr = false;
+
+            const listParams = {
+                Bucket: process.env.FS_AWS_BUCKET_NAME || '',
+                Prefix: `${req.authorizedUser}/${from}`,
+            };
+
+            s3.listObjects(listParams, (err, data) => {
+                if (data.Contents && data.Contents.length) {
+                    data.Contents.forEach((file, cb) => {
+                        const copyParams = {
+                            Bucket: process.env.FS_AWS_BUCKET_NAME || '',
+                            CopySource: process.env.FS_AWS_BUCKET_NAME + '/' + file.Key,
+                            Key: file.Key
+                                ? file.Key.replace(`${req.authorizedUser}/${from}`, `${req.authorizedUser}/${to}`)
+                                : ''
+                        };
+                        s3.copyObject(copyParams, (err, data) => {
+                            if (err) {
+                                hadErr = true;
+                            }
+                        });
+                        const deleteParams = {
+                            Bucket: process.env.FS_AWS_BUCKET_NAME,
+                            Key: file.Key
+                        };
+                        // @ts-ignore
+                        s3.deleteObject(deleteParams, (err, data) => {
+                            if (err) {
+                                hadErr = true;
+                            }
+                        });
+                    });
+                    if (hadErr) {
+                        res.status(500).end("Error moving files");
+                        return;
+                    }
+                    else {
+                        res.status(200).end("Success");
+                    }
+                }
+            });
+
+            return;
+        }
         const copyParams = {
             Bucket: process.env.FS_AWS_BUCKET_NAME,
             CopySource: `${process.env.FS_AWS_BUCKET_NAME}/${req.authorizedUser}/${from}`,

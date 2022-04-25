@@ -5,15 +5,17 @@ import fileUpload from "express-fileupload";
 import AWS from "aws-sdk";
 import fsAuth, { FSRequest } from '../../utils/fs-auth';
 
+interface File {
+    name: string;
+    data: Buffer;
+}
+
 interface UploadRequest extends FSRequest {
-    files: {
-        file: {
-            name: string;
-            data: Buffer;
-        }
-    },
-    visibility: 'private' | 'public' | 'global',
-    path: string,
+    files: File[],
+    body: {
+        visibility: 'private' | 'public' | 'global',
+        paths: string,
+    }
 }
 
 const handler = nextConnect({
@@ -27,7 +29,6 @@ const handler = nextConnect({
     .use(fileUpload())
     .use(fsAuth)
     .post(async (req: UploadRequest, res: NextApiResponse) => {
-
         if (!req.hasValidAuthorization) {
             res.status(401).end("Unauthorized");
             return;
@@ -42,30 +43,35 @@ const handler = nextConnect({
 
         const s3 = new AWS.S3();
 
-        // Binary data base64
-        // @ts-ignore
-        const fileContent = Buffer.from(req.files.file.data, 'binary');
+        let error = false;
 
-        // Setting up S3 upload parameters
-        const params = {
-            Bucket: process.env.FS_AWS_BUCKET_NAME,
-            Key: `${req.authorizedUser}/${req.body.visibility}/${req.body.path ? req.body.path + '/' : ''}${req.files.file.name}`,
-            Body: fileContent,
-            MediaMetadata: {
-                foo: 'bar'
-            }
-        };
+        let paths = JSON.parse(req.body.paths);
 
-        // @ts-ignore
-        s3.upload(params, function (err: any, data: any) {
-            if (err) {
-                throw err;
-            }
-            res.send({
-                "response_code": 200,
-                "response_message": "Success",
-                "response_data": data
+        for (const [ref, file] of Object.entries(req.files)) {
+
+            const fileContent = Buffer.from(file.data.toString(), 'binary');
+            // Setting up S3 upload parameters
+            const params = {
+                Bucket: process.env.FS_AWS_BUCKET_NAME,
+                Key: `${req.authorizedUser}/${req.body.visibility}/${paths[ref] ? paths[ref] + '/' : ''}${file.name}`,
+                Body: fileContent
+            };
+
+            // @ts-ignore
+            s3.upload(params, function (err: any, data: any) {
+                if (err) {
+                    error = true;
+                }
             });
+        }
+        if (error) {
+            res.status(500).end("Upload failed.");
+            return;
+        }
+
+        res.send({
+            "response_code": 200,
+            "response_message": "Success",
         });
     });
 

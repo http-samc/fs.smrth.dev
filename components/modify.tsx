@@ -19,7 +19,8 @@ const Modify = (props: Props) => {
     const [fileName, setFileName] = useState("")
     const { setToast } = useToasts()
 
-    const autoCompleteOptions = props.hints.map(path => {
+    const autoCompleteOptions = props.hints.map(p => {
+        let path = p.split('/').slice(1).join('/')
         return {
             value: path,
             label: path

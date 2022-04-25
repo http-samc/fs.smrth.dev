@@ -1,6 +1,7 @@
 import { Button, Tree, Text, Fieldset, Divider, Loading, Spacer, useToasts } from '@geist-ui/core'
-import { ChevronDown, ChevronsDown, ChevronsUp, Copy, Edit, Eye, Plus, RefreshCcw, Trash2 } from '@geist-ui/icons'
+import { ChevronDown, ChevronsDown, ChevronsUp, Copy, Database, Edit, Eye, Plus, RefreshCcw, Trash2, UploadCloud } from '@geist-ui/icons'
 import { useEffect, useState } from 'react'
+import Batch from '../components/batch'
 import Delete from '../components/delete'
 import Modify from '../components/modify'
 import Upload from '../components/upload'
@@ -18,12 +19,13 @@ interface Props {
   currentUser: string
 }
 
-let i = 'open';
+let i = 'copy';
 
 const Home = (props: Props) => {
   const [uploadModalIsVisible, setUploadModalIsVisible] = useState(false)
   const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false)
   const [modifyModalIsVisible, setModifyModalIsVisible] = useState(false)
+  const [batchModalIsVisible, setBatchModalIsVisible] = useState(false)
   const [treeExpanded, setTreeExpanded] = useState(false)
   const [updated, setUpdated] = useState(0)
   const [fileTree, setFileTree] = useState([])
@@ -51,11 +53,11 @@ const Home = (props: Props) => {
       let path = doc.document.split('/')
       let docName = path.pop()
 
+      path.splice(0, 0, doc.visibility)
       if (path.length > 0 && !tempHints.includes(path.join('/'))) {
         tempHints.push(path.join('/'))
       }
 
-      path.splice(0, 0, doc.visibility)
 
       let idx = 0
       let current = tree
@@ -149,6 +151,10 @@ const Home = (props: Props) => {
     setModifyModalIsVisible(!modifyModalIsVisible)
   }
 
+  const toggleBatchModal = () => {
+    setBatchModalIsVisible(!batchModalIsVisible)
+  }
+
   useEffect(() => {
     getFiles()
   }, [])
@@ -158,12 +164,14 @@ const Home = (props: Props) => {
       <Upload visible={uploadModalIsVisible} toggleVisibility={toggleUploadModal} hints={hints} onModalClose={getFiles} />
       <Modify visible={modifyModalIsVisible} toggleVisibility={toggleModifyModal} id={recentFileID} hints={hints} onModalClose={getFiles} />
       <Delete visible={deleteModalIsVisible} toggleVisibility={toggleDeleteModal} id={recentFileID} onModalClose={getFiles} />
+      <Batch visible={batchModalIsVisible} toggleVisibility={toggleBatchModal} hints={hints} onModalClose={getFiles} />
       <Spacer h={1.25} />
       <Fieldset height='100%' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
           <Fieldset.Content className='header-container'>
             <div style={{ width: 240, marginTop: 7 }} className='header-options'>
-              <Button onClick={toggleUploadModal} icon={<Plus />} auto>Upload</Button>
+              <Button onClick={toggleUploadModal} icon={<UploadCloud />} auto />
+              <Button onClick={toggleBatchModal} icon={<Database />} auto />
               <Button icon={treeExpanded ? <ChevronsUp /> : <ChevronsDown />} onClick={toggleTreeExpanded} auto />
               <Button icon={<RefreshCcw />} onClick={getFiles} auto />
             </div>

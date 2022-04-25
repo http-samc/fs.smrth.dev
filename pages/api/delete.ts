@@ -18,7 +18,7 @@ const handler = nextConnect({
             return;
         }
 
-        const { id } = req.query;
+        const { id, batchAction } = req.query;
         if (!id) {
             res.status(400).end("Missing id");
             return;
@@ -32,6 +32,38 @@ const handler = nextConnect({
 
 
         const s3 = new AWS.S3();
+
+        if (batchAction) {
+            const listParams = {
+                Bucket: process.env.FS_AWS_BUCKET_NAME || '',
+                Marker: `${req.authorizedUser}/${id}`,
+            };
+
+            s3.listObjects(listParams, (err, data) => {
+                if (err) {
+                    res.status(500).end(err.message);
+                    return;
+                }
+
+                const deleteParams = {
+                    Bucket: process.env.FS_AWS_BUCKET_NAME || '',
+                    Delete: {
+                        Objects: data.Contents ? data.Contents.map(c => ({ Key: c.Key })) : [],
+                        Quiet: false
+                    }
+                }
+                // @ts-ignore
+                s3.deleteObjects(deleteParams, (err, data) => {
+                    if (err) {
+                        res.status(500).end(err.message);
+                        return;
+                    }
+
+                    res.status(200).end("Success");
+                });
+            });
+            return;
+        }
 
         // Setting up S3 upload parameters
         const params = {
