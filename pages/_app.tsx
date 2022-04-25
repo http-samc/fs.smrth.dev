@@ -154,7 +154,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         <Divider />
         {
           isAuthenticated
-            ? <Component {...pageProps} theme={theme} currentUser={user} isSmall={isSmall} />
+            ? <Component {...pageProps} theme={theme} currentUser={user} isSmall={isSmall} signOut={signOut} />
             : <Auth onAuthFinished={(username: string) => {
               setIsAuthenticated(true); window.localStorage.setItem('user', username)
             }} />

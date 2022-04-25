@@ -8,6 +8,7 @@ import Upload from '../components/upload'
 import formatBytes from '../utils/format-bytes'
 import getRelativeTime from '../utils/get-relative-time'
 import Cookies from 'js-cookie'
+
 interface Document {
   document: string,
   modified: string,
@@ -18,6 +19,7 @@ interface Document {
 interface Props {
   currentUser: string,
   isSmall: boolean,
+  signOut: () => void,
 }
 
 let i = 'copy';
@@ -36,10 +38,20 @@ const Home = (props: Props) => {
   const { setToast } = useToasts()
 
   const getFiles = async () => {
+    let token = Cookies.get('authorization');
+    if (!token) {
+      props.signOut();
+      return;
+    }
+
     setLoading(true)
     setUpdated(Date.now())
 
-    const res = await fetch('/api/list-tree')
+    const res = await fetch('/api/list-tree', {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+      }
+    })
     const data: Document[] = await res.json()
     if (!data.length) {
       setFileTree([])
