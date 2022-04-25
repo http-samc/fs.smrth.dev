@@ -36,7 +36,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
       setIsAuthenticated(false)
     }
     else {
-      setIsAuthenticated(true)
+      // setIsAuthenticated(true)
     }
 
     const localTheme = window.localStorage.getItem('theme')
