@@ -48,8 +48,8 @@ const handler = nextConnect({
         let paths = JSON.parse(req.body.paths);
 
         for (const [ref, file] of Object.entries(req.files)) {
-
-            const fileContent = Buffer.from(file.data.toString(), 'binary');
+            // @ts-ignore
+            const fileContent = Buffer.from(file.data, 'binary');
             // Setting up S3 upload parameters
             const params = {
                 Bucket: process.env.FS_AWS_BUCKET_NAME,

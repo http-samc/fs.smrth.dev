@@ -68,16 +68,16 @@ const handler = nextConnect({
                             if (err) {
                                 hadErr = true;
                             }
-                        });
-                        const deleteParams = {
-                            Bucket: process.env.FS_AWS_BUCKET_NAME,
-                            Key: file.Key
-                        };
-                        // @ts-ignore
-                        s3.deleteObject(deleteParams, (err, data) => {
-                            if (err) {
-                                hadErr = true;
-                            }
+                            const deleteParams = {
+                                Bucket: process.env.FS_AWS_BUCKET_NAME,
+                                Key: file.Key
+                            };
+                            // @ts-ignore
+                            s3.deleteObject(deleteParams, (err, data) => {
+                                if (err) {
+                                    hadErr = true;
+                                }
+                            });
                         });
                     });
                     if (hadErr) {
@@ -99,38 +99,26 @@ const handler = nextConnect({
             ACL: 'private'
         };
 
-        let copyFailed = false;
-
         // @ts-ignore
         s3.copyObject(copyParams, (err, data) => {
             if (err) {
                 res.status(500).end(err.message);
-                copyFailed = true;
                 return;
             }
-        });
-
-        if (copyFailed) return res.send({
-            "response_code": 500,
-            "response_message": "Failed to copy file",
-            "response_data": null
-        });
-
-        const deleteParams = {
-            Bucket: process.env.FS_AWS_BUCKET_NAME,
-            Key: `${req.authorizedUser}/${from}`,
-        };
-
-        // @ts-ignore
-        s3.deleteObject(deleteParams, function (err: any, data: any) {
-            if (err) {
-                res.status(500).end(err.message);
-                return;
-            }
-            res.send({
-                "response_code": 200,
-                "response_message": "Success",
-                // "response_data": data
+            const deleteParams = {
+                Bucket: process.env.FS_AWS_BUCKET_NAME,
+                Key: `${req.authorizedUser}/${from}`,
+            };
+            // @ts-ignore
+            s3.deleteObject(deleteParams, function (err: any, data: any) {
+                if (err) {
+                    res.status(500).end(err.message);
+                    return;
+                }
+                res.send({
+                    "response_code": 200,
+                    "response_message": "Success",
+                });
             });
         });
     });
