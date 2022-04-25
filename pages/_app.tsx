@@ -85,6 +85,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
         <title>{host}</title>
         <meta name="title" content="fs.smrth.dev" />
         <meta name="description" content="Sam Chitgopekar's filesystem." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://fs.smrth.dev/${router.pathname}`} />
