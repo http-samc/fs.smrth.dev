@@ -38,7 +38,7 @@ const Batch = (props: Props) => {
     const closeModal = () => {
         setIsActing(false)
         setOptions([])
-        setAction("download")
+        setAction("move")
         setPath("")
         setMovePath("")
         setDeletePath("")
