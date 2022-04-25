@@ -131,7 +131,6 @@ const App = ({ Component, pageProps, router }: AppProps) => {
               }
             </div>
             <Drawer visible={drawerIsVisible} onClose={() => setDrawerIsVisible(false)}>
-              <Drawer.Title>{host}</Drawer.Title>
               <Drawer.Content>
                 <Button
                   onClick={toggleTheme}
