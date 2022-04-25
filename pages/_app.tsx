@@ -1,12 +1,13 @@
 import type { AppProps } from 'next/app'
 import { useEffect, useState } from 'react'
-import { GeistProvider, CssBaseline, Link, Divider, Page, Text, Loading, Spacer, Button, Breadcrumbs } from '@geist-ui/core'
+import { GeistProvider, CssBaseline, Link, Divider, Page, Text, Loading, Spacer, Button, Breadcrumbs, Drawer } from '@geist-ui/core'
 import Head from 'next/head'
 import Script from 'next/script'
 import Cookies from 'js-cookie'
 import '../styles/globals.css'
-import { Moon, Sun } from '@geist-ui/icons'
+import { LogOut, Menu, Moon, Sun } from '@geist-ui/icons'
 import Auth from '../components/auth'
+import { useMediaQuery } from 'react-responsive'
 
 const App = ({ Component, pageProps, router }: AppProps) => {
   const [host, setHost] = useState('')
@@ -14,6 +15,8 @@ const App = ({ Component, pageProps, router }: AppProps) => {
   const [theme, setTheme] = useState('light')
   const [loading, setLoading] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [drawerIsVisible, setDrawerIsVisible] = useState(false)
+  const isSmall = useMediaQuery({ query: '(max-width: 600px)' })
 
   const toggleTheme = () => {
     let newTheme = theme === 'light' ? 'dark' : 'light'
@@ -22,9 +25,6 @@ const App = ({ Component, pageProps, router }: AppProps) => {
   }
 
   const signOut = () => {
-    fetch('/api/auth', {
-      method: 'DELETE'
-    })
     Cookies.set('authorization', '')
     setIsAuthenticated(false)
   }
@@ -113,24 +113,49 @@ const App = ({ Component, pageProps, router }: AppProps) => {
             </Link>
 
             <div className='header-options'>
-              {isAuthenticated && <Button auto style={{ marginRight: 10 }} onClick={signOut}>Sign Out</Button>}
-              <Button
-                onClick={toggleTheme}
-                auto
-                className='theme-toggle'
-                icon={
-                  theme == 'light'
-                    ? <Moon color='purple' />
-                    : <Sun color='yellow' />
-                }
-              />
+              {!isSmall && isAuthenticated && <Button auto icon={<LogOut />} style={{ marginRight: 10 }} onClick={signOut}>Sign Out</Button>}
+              {!isSmall &&
+                <Button
+                  onClick={toggleTheme}
+                  auto
+                  className='theme-toggle'
+                  icon={
+                    theme == 'light'
+                      ? <Moon color='purple' />
+                      : <Sun color='yellow' />
+                  }
+                />
+              }
+              {
+                isSmall && <Button icon={<Menu />} auto onClick={() => setDrawerIsVisible(true)} />
+              }
             </div>
+            <Drawer visible={drawerIsVisible} onClose={() => setDrawerIsVisible(false)}>
+              <Drawer.Title>{host}</Drawer.Title>
+              <Drawer.Content>
+                <Button
+                  onClick={toggleTheme}
+                  className='theme-toggle'
+                  icon={
+                    theme == 'light'
+                      ? <Moon color='purple' />
+                      : <Sun color='yellow' />
+                  }
+                >
+                  Set Theme
+                </Button>
+                <Spacer />
+                {
+                  isAuthenticated && <Button icon={<LogOut />} style={{ marginRight: 10 }} onClick={signOut}>Sign Out</Button>
+                }
+              </Drawer.Content>
+            </Drawer>
           </div>
         </Page.Header>
         <Divider />
         {
           isAuthenticated
-            ? <Component {...pageProps} theme={theme} currentUser={user} />
+            ? <Component {...pageProps} theme={theme} currentUser={user} isSmall={isSmall} />
             : <Auth onAuthFinished={(username: string) => {
               setIsAuthenticated(true); window.localStorage.setItem('user', username)
             }} />

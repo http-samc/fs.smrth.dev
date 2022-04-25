@@ -7,7 +7,7 @@ import Modify from '../components/modify'
 import Upload from '../components/upload'
 import formatBytes from '../utils/format-bytes'
 import getRelativeTime from '../utils/get-relative-time'
-
+import Cookies from 'js-cookie'
 interface Document {
   document: string,
   modified: string,
@@ -16,7 +16,8 @@ interface Document {
 }
 
 interface Props {
-  currentUser: string
+  currentUser: string,
+  isSmall: boolean,
 }
 
 let i = 'copy';
@@ -168,14 +169,14 @@ const Home = (props: Props) => {
       <Spacer h={1.25} />
       <Fieldset height='100%' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
-          <Fieldset.Content className='header-container'>
-            <div style={{ width: 240, marginTop: 7 }} className='header-options'>
+          <Fieldset.Content className={props.isSmall ? 'header-container-stack' : 'header-container'}>
+            <div style={{ width: 240 }} className='header-options'>
               <Button onClick={toggleUploadModal} icon={<UploadCloud />} auto />
               <Button onClick={toggleBatchModal} icon={<Database />} auto />
               <Button icon={treeExpanded ? <ChevronsUp /> : <ChevronsDown />} onClick={toggleTreeExpanded} auto />
               <Button icon={<RefreshCcw />} onClick={getFiles} auto />
             </div>
-            <div style={{ width: 240, marginTop: 7 }} className='header-container'>
+            <div style={{ width: 240, marginTop: props.isSmall ? 10 : 0 }} className='header-container'>
               <Button icon={<Copy />} onClick={() => { i = 'copy'; setToast({ text: 'Mode: Copying Link', type: 'secondary' }) }} auto ghost type="secondary" />
               <Button icon={<Eye />} onClick={() => { i = 'open'; setToast({ text: 'Mode: Opening File', type: 'success' }) }} auto ghost type="success" />
               <Button icon={<Edit />} onClick={() => { i = 'modify'; setToast({ text: 'Mode: Modifying File', type: 'warning' }) }} auto ghost type="warning" />
