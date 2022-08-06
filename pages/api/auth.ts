@@ -9,6 +9,7 @@ const client = new MongoClient(uri);
 const handler = nextConnect({
     onError: (err, req: NextApiRequest, res: NextApiResponse, next) => {
         res.status(500).end("Sorry, something broke!");
+        console.log(err.message)
     },
     onNoMatch: (req: NextApiRequest, res: NextApiResponse) => {
         res.status(404).end("Page not found");

@@ -197,7 +197,7 @@ const Home = (props: Props) => {
           </Fieldset.Content>
           <Divider my={0} />
         </div>
-        <Fieldset.Content height='100%'>
+        <Fieldset.Content height='100%' style={{ overflow: 'scroll', minHeight: 'fit-content', minWidth: 'fit-content' }}>
           {
             loading
               ? <Loading type='success' />
